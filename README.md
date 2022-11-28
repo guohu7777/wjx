@@ -17,4 +17,29 @@ pip install selenium -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 将下载好的chromedriver.exe放到 C:\Program Files\Google\Chrome\Application 目录下
 
 ### 2.开始运行
-#### 2.
+#### 2.获取项目
+手动下载压缩包后解压或使用git拉取本项目
+
+进入main.py目录下输入
+```python
+python main.py
+```
+会生成一个config.json文件
+#### 2.1编写配置文件
+```jsom
+
+{
+    "option_nums":[2, 5, 4, 4, 4, 5, 2], 
+    "注释1": "每个问题选项的数量(-1表示该题为简答题)",
+    "multiple_choice":[0,0,0,0,0,1,0],
+    "注释2": " 0表单选 1表多选 简答题随意",
+    "max_workers" : 4, 
+    "注释3": "//线程数量",
+    "run_num" : 200 , 
+    "注释4": "//填写问卷次数",
+    "url" : "https://www.wjx.cn/vm/exnm04A.aspx",
+    "注释5" : "调查问卷链接"
+}
+```
+
+
