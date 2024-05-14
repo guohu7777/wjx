@@ -1,5 +1,8 @@
 from selenium import webdriver
-import random,os,time,json
+import random
+import os
+import time
+import json
 from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import NoSuchElementException
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -75,17 +78,17 @@ chrome_options.add_argument('--disable-gpu')
 # 滑块防止检测
 chrome_options.add_argument("--incognito") 
 chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-chrome_options.add_experimental_option('excludeSwitches', ['enable-automation'])
+chrome_options.add_experimental_option('excludeSwitches', ['enable-automation']) 
+chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
-driver_path = Service('C:\Program Files\Google\Chrome\Application\chromedriver.exe')
+driver_path = Service(
+    'C:\Program Files\Google\Chrome\Application\chromedriver.exe')
 # driver_path = ''
 head = '(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))'
 
 
-
-
 if os.path.isfile("config.json"):
-    with open("config.json",encoding='utf8') as f:
+    with open("config.json", encoding='utf8') as f:
         x = json.load(f)
         option_nums = x["option_nums"]
         multiple_choice = x["multiple_choice"]
@@ -93,7 +96,7 @@ if os.path.isfile("config.json"):
         run_num = x["run_num"]
         url = x["url"]
 else:
-    with open("config.json","w+",encoding='utf8') as f:
+    with open("config.json", "w+", encoding='utf8') as f:
         f.write("""
 {
     "option_nums":[2, 5, 4, 4, 4, 5, 2], 
@@ -107,7 +110,7 @@ else:
     "url" : "https://www.wjx.cn/vm/exnm04A.aspx",
     "注释5" : "调查问卷链接"
 }"""
-        )
+                )
     print(
         """
         ##########################################
@@ -126,7 +129,7 @@ else:
 
 def solve(cnt: int):
 
-    #设置代理 如果有请自行填写
+    # 设置代理 如果有请自行填写
     # PROXY = random_proxy()  # 随机用一个代理
 
     # webdriver.DesiredCapabilities.CHROME['proxy'] = {
@@ -137,9 +140,11 @@ def solve(cnt: int):
     # }
 
     driver = webdriver.Chrome(service=driver_path, options=chrome_options)
+    # driver = webdriver.Chrome(service=driver_path)
     driver.implicitly_wait(10)
     # 设置最大连接时间，超时抛出异常
     driver.set_page_load_timeout(10)
+    driver.implicitly_wait(2)
 
     # 设置浏览器定位
     (longitude, latitude) = random_position()
@@ -176,20 +181,29 @@ def solve(cnt: int):
         elif multiple_choice[i] == 0:
             # 单选题
             q_option = random_option(num)
-            driver.find_element(By.XPATH, f'//*[@id="div{i+1}"]/div[2]/div[{q_option}]').click()
+            driver.find_element(
+                By.XPATH, f'//*[@id="div{i+1}"]/div[2]/div[{q_option}]').click()
 
         else:
             # 多选题
             q_selects = random_multi_select(num)
             for j in q_selects:
-                driver.find_element(By.XPATH, f'//*[@id="div{i+1}"]/div[2]/div[{j}]').click()
-                
-    driver.find_element(By.XPATH, '//*[@id="ctlNext"]').click()
-    driver.find_element(By.CLASS_NAME, 'layui-layer-btn0').click()
-    driver.find_element(By.XPATH, '//*[@id="rectMask"]').click()
+                driver.find_element(
+                    By.XPATH, f'//*[@id="div{i+1}"]/div[2]/div[{j}]').click()
 
+   
+    try:
+        driver.find_element(By.XPATH, '//*[@id="ctlNext"]').click()
+        driver.find_element(By.CLASS_NAME, 'layui-layer-btn0').click()
+    except:
+        pass
+    try:
+        driver.find_element(By.XPATH, '//*[@id="rectMask"]').click()
+        time.sleep(3)
+    except:
+        pass
 
-    
+    # driver.find_element(By.ID, 'rectMask').click()
 
     # 滑块验证
     try:
@@ -198,20 +212,18 @@ def solve(cnt: int):
         print('[' + eval(head) + f']: ', slider.text, cnt)
         if str(slider.text).startswith("请按住滑块"):
             width = slider.size.get('width')
-            ActionChains(driver).drag_and_drop_by_offset(slider, width, 0).perform()
+            ActionChains(driver).drag_and_drop_by_offset(
+                slider, width, 0).perform()
+            time.sleep(3)
 
     except NoSuchElementException:
         pass
     res = driver.find_element(By.ID, 'divdsc')
-    print('[' + eval(head) + f']: ',res.text, cnt)
+    print('[' + eval(head) + f']: ', res.text, cnt)
     driver.close()
-
 
 
 if __name__ == '__main__':
     pool = ThreadPoolExecutor(max_workers=max_workers)
     for i in range(run_num):
-        pool.submit(solve, i+1)
-
-
-
+        pool.submit(solve,i+1)

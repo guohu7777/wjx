@@ -12,7 +12,7 @@ pip install selenium -i https://pypi.tuna.tsinghua.edu.cn/simple some-package
 #### 1.2安装浏览器驱动(这里默认使用Chrome浏览器进行演示)
 使用Chrome浏览器打开链接查看自己浏览器的版本 chrome://settings/help
 
-然后前往这个链接下载对应版本的浏览器驱动(若无对应版本选着高版本即可) http://npm.taobao.org/mirrors/chromedriver/
+然后前往这个链接下载对应版本的浏览器驱动(若无对应版本选着高版本即可) https://getwebdriver.com/chromedriver#stable
 
 将下载好的chromedriver.exe放到 C:\Program Files\Google\Chrome\Application 目录下
 
